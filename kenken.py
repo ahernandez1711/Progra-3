@@ -1,12 +1,8 @@
-
 """
 Programa 2: KenKen
 Elaborado por: Daniel Pantigoso Valladares, Andrés Hernández y Juan Pablo
 Fecha de creación: 05-10-2018
-Fecha de última modificación: 12-10-2018
-
-Notas para pensar:
-1.
+Fecha de última modificación: 6-11-2018
 """
 
 #Importa módulos
@@ -24,6 +20,7 @@ KenKen = ("Fixedsys", 32, "bold")
 top10Font = ("Arial", 10, "bold underline")
 BODY_FONT = ("Verdana", 10)
 BODY_FONT_ITALIC = ("Verdana", 10, "italic")
+BODY_FONT_BOLD = ("Verdana", 10, "bold")
 
 def salir(event = None):
    quit()
@@ -39,10 +36,18 @@ def validarJuego():
     print("Todavia no esta lista esta funcion")
     messagebox.showinfo("HAY ERRORES EN EL JUEGO")
 
+def botonesTablero(numeroDeCasillas):
+    fila = []
+    columna =[]
+    for i in range (numeroDeCasillas):
+        fila.append(columna)
+        for j in fila:
+            columna.append([str(i)])
+    return fila
+
 """Fin de las funciones/variables generales."""
 
 """Empiezan clases:"""
-
 class KenKen(tk.Tk): #Clase principal
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs) #Initialize
@@ -58,7 +63,7 @@ class KenKen(tk.Tk): #Clase principal
 
         self.frames = {}
 
-        for F in (ventanaPrincipal, Top10): #F mayuscula para indicar que son los Frames
+        for F in (ventanaPrincipal, Top10, IniciarJuego): #F mayuscula para indicar que son los Frames
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row = 12, column = 12, sticky = "NESW", padx = 1, pady = 1)
@@ -73,7 +78,6 @@ class KenKen(tk.Tk): #Clase principal
 class ventanaPrincipal(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        tk.Frame.geometry('500x200')
 
         #Row Configure
         tk.Frame().grid_rowconfigure(0, weight = 1)
@@ -98,7 +102,7 @@ class ventanaPrincipal(tk.Frame):
                                .grid(row = 3, column = 12, padx = 1, pady = 1, sticky = "NESW")
         
         botonIniciarJuego = tk.Button(self, text = "INICIAR JUEGO", font = BODY_FONT, bg = "red",\
-                                      command = None)\
+                                      command = lambda: controller.show_frame(IniciarJuego))\
                                       .grid(row = 10, column = 0,  padx = 1, pady = 1, sticky = "NESW")
         
         botonValidarJuego = tk.Button(self, text = "VALIDAR JUEGO", font = BODY_FONT,\
@@ -123,13 +127,69 @@ class ventanaPrincipal(tk.Frame):
         
         
 
-"""class iniciarJuego(tk.Frame):
+class IniciarJuego(tk.Frame):
+    def __init__(self, parent, controller):
+        v = tk.IntVar() #Valor para el formato de las casillas
+        v.set(1) #El default para 3x3
+        d = tk.IntVar() #Valor para la dificultad del juego
+        d.set(1) #El default para Principiante
+        
+        tk.Frame.__init__(self, parent)
+        
+        #Labels
+        labelEscogerCasillas = tk.Label(self, text = "Escoja el formato: ", font = BODY_FONT_BOLD)
+        labelEscogerCasillas.grid(row = 0, column = 0, padx = 2, pady = 2)
+        
+        labelEscogerDificultad = tk.Label(self, text = "Escoja la dificultad: ", font = BODY_FONT_BOLD)
 
-class otroJuego(tk.Frame):
+        labelEscogerDificultad.grid(row = 0, column = 4, padx = 2, pady = 2)
+        
+        
+        #Botones
+        #Formato
+        formatos = [("3x3", 1), ("4x4", 2), ("5x5", 3), ("6x6", 4), ("7x7", 5), ("8x8", 6), ("9x9", 7)]
 
-class reiniciarJuego(tk.Frame):
+        for valor, formato in enumerate(languages):
+            tk.Radiobutton(aplicacion, text = language, padx = 20, variable = v, command = ShowChoice, value=val)\
+                                       .grid()
+        
+        boton3x3 = tk.Radiobutton(self, text = "3 x 3", font = BODY_FONT, variable = v, value = 1)\
+                                         .grid(row = 1, column = 0, padx = 1, pady = 1)
 
-class terminarJuego(tk.Frame):"""
+        boton4x4 = tk.Radiobutton(self, text = "4 x 4", font = BODY_FONT, variable = v, value = 2)\
+                                         .grid(row = 2, column = 0, padx = 1, pady = 1)
+
+        boton5x5 = tk.Radiobutton(self, text = "5 x 5", font = BODY_FONT, variable = v, value = 3)\
+                                         .grid(row = 3, column = 0, padx = 1, pady = 1)
+
+        boton6x6 = tk.Radiobutton(self, text = "6 x 6", font = BODY_FONT, variable = v, value = 4)\
+                                         .grid(row = 4, column = 0, padx = 1, pady = 1)
+
+        boton7x7 = tk.Radiobutton(self, text = "7 x 7", font = BODY_FONT, variable = v, value = 5)\
+                                         .grid(row = 5, column = 0, padx = 1, pady = 1)
+
+        boton8x8 = tk.Radiobutton(self, text = "8 x 8", font = BODY_FONT, variable = v, value = 6)\
+                                         .grid(row = 6, column = 0, padx = 1, pady = 1)
+
+        boton9x9 = tk.Radiobutton(self, text = "9 x 9", font = BODY_FONT, variable = v, value = 7)\
+                                         .grid(row = 7, column = 0, padx = 1, pady = 1)
+        
+        #Dificultad
+        dificultades = [("Principiante", 1), ("Intermedio", 2), ("Experto", 3)]
+        botonPrincipiante = tk.Radiobutton(self, text = "Principiante", font = BODY_FONT, command = None)\
+                                      .grid(row = 1, column = 4, padx = 1, pady = 1)
+        botonIntermedio = tk.Radiobutton(self, text = "Intermedio", font = BODY_FONT, command = None)\
+                                      .grid(row = 4, column = 4, padx = 1, pady = 1)
+        botonDificil = tk.Radiobutton(self, text = "Experto", font = BODY_FONT, command = None)\
+                                      .grid(row = 7, column = 4, padx = 1, pady = 1)
+        
+        botonVolver = tk.Button(self, text = "Volver al juego", font = BODY_FONT_BOLD, bg = "yellow",\
+                                   command = lambda: controller.show_frame(ventanaPrincipal))\
+                                   .grid(row = 13, column = 0, padx = 2, pady = 2)
+"""
+class OtroJuego(tk.Frame):
+class ReiniciarJuego(tk.Frame):
+class TerminarJuego(tk.Frame):"""
 
 #Ventana de los tiempos de los mejores 10.
 class Top10(tk.Frame):
@@ -148,25 +208,12 @@ class Top10(tk.Frame):
         labelTiempo.grid(row = 1, column = 2, padx = 2, pady = 2)
 
         #Botones
-        botonVolver = tk.Button(self, text = "Volver al juego", font = BODY_FONT, bg = "yellow",\
+        botonVolver = tk.Button(self, text = "Volver al juego", font = BODY_FONT_BOLD, bg = "yellow",\
                                    command = lambda: controller.show_frame(ventanaPrincipal))\
-                                   .grid(row = 13, column = 1, padx = 2, pady = 2)        
-        
-        boton1=tk.Button(self, bg='yellow')
-        boton2=tk.Button(self,bg='red')
-        boton3=tk.Button(self,bg='blue')
-        boton4=tk.Button(self,bg='green')
-        boton5=tk.
-        boton6
-        boton7
-        boton8
-        boton9
+                                   .grid(row = 13, column = 1, padx = 2, pady = 2)
    
         
-        
     
-    
-        
 """Fin de clases."""
 #Programa Principal
 aplicacion = KenKen()
